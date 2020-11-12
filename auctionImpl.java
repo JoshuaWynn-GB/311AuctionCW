@@ -93,6 +93,30 @@ public class auctionImpl extends java.rmi.server.UnicastRemoteObject implements 
         }
     }
 
+    public boolean buyerIDCheck(int ID)
+    {
+        if (AuctionBuyerMap.get(ID) != null)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public boolean auctionItemCheck(int ID)
+    {
+        if (AuctionItemMap.get(ID) != null)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
     public int generateClientID()
     {
         return generateID(clientID);

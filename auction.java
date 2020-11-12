@@ -61,7 +61,12 @@ public interface auction
 
     public boolean clientIDChecker(int ClientID, int ID)
     throws java.rmi.RemoteException;
+
+    public boolean buyerIDCheck(int ID)
+    throws java.rmi.RemoteException;
     
+    public boolean auctionItemCheck(int ID)
+    throws java.rmi.RemoteException;
 
    
 }

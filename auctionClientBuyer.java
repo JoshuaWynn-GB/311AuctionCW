@@ -1,6 +1,9 @@
 import java.rmi.Naming; //Import the rmi naming - so you can lookup remote object
 import java.rmi.RemoteException; //Import the RemoteException class so you can catch it
 import java.util.Set;
+
+import javax.lang.model.util.ElementScanner14;
+
 import java.io.Console;
 import java.net.MalformedURLException;	//Import the MalformedURLException class so you can catch it
 import java.rmi.NotBoundException;	//Import the NotBoundException class so you can catch it
@@ -16,16 +19,32 @@ public class auctionClientBuyer {
                 auction c = (auction) Naming.lookup("rmi://localhost:1099/AuctionService");
                 while (exit == false)
                 {
-                    System.out.println("Welcome to the Client Buyer\n==================\nType '1' to Log In/Log Out\nType '2' to see all accounts\nType '3' to make a bid\nType '4' to exit the program");
-                    
+                    System.out.println("Welcome to the Client Buyer\n==================");
+                    if (currentLoggedInBuyer==-1)
+                    {
+                        System.out.println("You are currently NOT logged in.");
+                    }
+                    else
+                    {
+                        System.out.println("You are currently logged in as: " + c.getBuyerSpec(currentLoggedInBuyer).getBuyerName());
+                    }
+                    System.out.println("Type '1' to Log In/Log Out\nType '2' to see all accounts\nType '3' to make a bid\nType '4' to exit the program");
                     switch (console.readLine()) {
                         case "1":
                             System.out.println("Enter your buyer's ID: ");
                             String strID = console.readLine();
                             int ID = Integer.valueOf(strID).intValue();
                             //System.out.println(c.getBuyerSpec(ID).getBuyerName());
-                            currentLoggedInBuyer = ID;
-                            System.out.println("You are now logged into as: "+c.getBuyerSpec(currentLoggedInBuyer).getBuyerName());
+
+                            if (c.buyerIDCheck(ID))
+                            {
+                                currentLoggedInBuyer = ID;
+                                System.out.println("You are now logged into as: "+c.getBuyerSpec(currentLoggedInBuyer).getBuyerName() + "\n");
+                            }
+                            else 
+                            {
+                                System.out.println("Account with that ID does not exist.");
+                            }
                             break;
                         case "2":
                             
@@ -54,17 +73,34 @@ public class auctionClientBuyer {
                             String strListingID = console.readLine();
                             int ListingID = Integer.valueOf(strListingID).intValue();
 
-                            double curPrice = c.getSpec(ListingID, 0).getItemCurrentPrice();
-                            System.out.println("Current Bid: " + curPrice);
-                            System.out.println("Enter new bid: ");
-                            String strNewBid= console.readLine();
-                            double newBid = Double.valueOf(strNewBid).doubleValue();
-                            if (newBid>curPrice)
+                            if (c.auctionItemCheck(ListingID))
                             {
-                                c.updateNewBid(ListingID, currentLoggedInBuyer, newBid);
+                                double curPrice = c.getSpec(ListingID, 0).getItemCurrentPrice();
+                                System.out.println("Current Bid: " + curPrice);
+                                System.out.println("Enter new bid: ");
+                                String strNewBid= console.readLine();
+                                double newBid = Double.valueOf(strNewBid).doubleValue();
+                                if (newBid>curPrice)
+                                {
+                                    c.updateNewBid(ListingID, currentLoggedInBuyer, newBid);
+                                }
+                                else
+                                {
+                                    System.out.println("Your bid was either the same or lower then the current sale price, try a higher bid.");
+                                }
                             }
+                            else 
+                            {
+                                System.out.println("Listing doesn't exist.");
+                            }
+
+
                           break;
                         case "4":
+                          currentLoggedInBuyer = -1;
+                          System.out.println("User has been logged out.\n");
+                          break;
+                        case "5":
                           exit = true;
                           break;
                         default:
