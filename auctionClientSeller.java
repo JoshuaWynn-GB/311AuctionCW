@@ -61,6 +61,19 @@ public class auctionClientSeller   {
                         }
                       break;
                     case "3":
+                        System.out.println("Enter your item ID of the auction you want to close: ");
+                        String strCloseID = console.readLine();
+                        int closeID = Integer.valueOf(strCloseID).intValue();
+                        if (c.reservePriceCheck(closeID))
+                        {
+                            AuctionItem closedListing = c.closeListing(closeID);
+                            System.out.println(c.getBuyerSpec(closedListing.getItemBuyerID()).getBuyerName() + " has won the listing (details below): "+ "\nTitle: " + closedListing.getItemTitle() + "\nSold Price: " + closedListing.getItemCurrentPrice() + "\nContact Name: " + c.getBuyerSpec(closedListing.getItemBuyerID()).getBuyerName() + "\nContact Email: "+ c.getBuyerSpec(closedListing.getItemBuyerID()).getBuyerEmail());
+                        }
+                        else
+                        {
+                            System.out.println("Reserve price has not been met so auction was not closed");
+                        }
+2
                       
                       break;
                     case "4":

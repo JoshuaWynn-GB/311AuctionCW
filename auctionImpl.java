@@ -37,8 +37,8 @@ public class auctionImpl extends java.rmi.server.UnicastRemoteObject implements 
          createNewListing("Car", "Metal box with wheels", 1000.00);
          createNewListing("Chair", "Made of wood and has four legs", 40.00);
 
-         createNewBuyer("John Smith");
-         createNewBuyer("Brad Walsh");
+         createNewBuyer("John Smith", "john.smith@gmail.com");
+         createNewBuyer("Brad Walsh", "brad.walsh@gmail.com");
 
 
          
@@ -58,12 +58,31 @@ public class auctionImpl extends java.rmi.server.UnicastRemoteObject implements 
         return newAuctionItem;
     }
 
-    public auctionBuyer createNewBuyer(String Name) {
+    public auctionBuyer createNewBuyer(String Name, String Email) {
         int ID = generateID(AuctionItemMap);
-        auctionBuyer newBuyer = new auctionBuyer(ID, Name);
+        auctionBuyer newBuyer = new auctionBuyer(ID, Name, Email);
         AuctionBuyerMap.put(ID, newBuyer);
         System.out.println(AuctionBuyerMap);
         return newBuyer;
+    }
+
+    public AuctionItem closeListing(int ID)
+    {
+        AuctionItem curClosedListing = AuctionItemMap.get(ID);
+        AuctionItemMap.remove(ID);
+        return curClosedListing;
+    }
+
+    public boolean reservePriceCheck(int ID)
+    {
+        if(AuctionItemMap.get(ID).getItemReservePrice()<AuctionItemMap.get(ID).getItemCurrentPrice())
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
 

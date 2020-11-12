@@ -32,7 +32,7 @@ public class auctionClientBuyer {
                             Set<Integer> allKeys = c.getBuyerMap().keySet();
                             for(Integer i : allKeys) 
                             {
-                                System.out.println("ID: " + c.getBuyerSpec(i).getBuyerID() + "\nName: " + c.getBuyerSpec(i).getBuyerName() + "\n");           
+                                System.out.println("ID: " + c.getBuyerSpec(i).getBuyerID() + "\nName: " + c.getBuyerSpec(i).getBuyerName() + "\nEmail: " + c.getBuyerSpec(i).getBuyerEmail() + "\n");           
                             }
                             break;
                         case "3":
