@@ -73,7 +73,6 @@ public class auctionClientSeller   {
                         {
                             System.out.println("Reserve price has not been met so auction was not closed");
                         }
-2
                       
                       break;
                     case "4":
