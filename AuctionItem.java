@@ -6,15 +6,22 @@ public class AuctionItem implements Serializable{
     private double itemReservePrice;
     private int itemBuyerID;
     private double itemCurrentPrice;
+    private int itemClientID;
     //Creates a constructor to construct an aunction item object
-    public AuctionItem(int iID, String iTitle, String iDescription, Double iReservePrice)
+    public AuctionItem(int iClientID, int iID, String iTitle, String iDescription, Double iReservePrice)
     {
+        itemClientID = iClientID;
         itemID = iID;
         itemTitle = iTitle;
         itemDescription = iDescription;
         itemReservePrice = iReservePrice;
         itemBuyerID = -1;
         itemCurrentPrice = 0.00;
+    }
+
+    public int getClientID()
+    {
+        return itemClientID;
     }
 
     public int getItemID()

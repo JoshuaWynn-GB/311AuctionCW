@@ -4,6 +4,8 @@ import java.nio.file.Files;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
+import java.util.LinkedList;
+
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
@@ -18,6 +20,8 @@ public class auctionImpl extends java.rmi.server.UnicastRemoteObject implements 
     // Create a Hashmap to store the auction items
     HashMap<Integer, AuctionItem> AuctionItemMap = new HashMap<Integer, AuctionItem>();
     HashMap<Integer, auctionBuyer> AuctionBuyerMap = new HashMap<Integer, auctionBuyer>();
+    HashMap<Integer, Integer> clientID = new HashMap<Integer, Integer>();
+    //HashMap<Integer> clientID = new HashMap<Integer>();
 
     public auctionImpl()
 
@@ -33,9 +37,9 @@ public class auctionImpl extends java.rmi.server.UnicastRemoteObject implements 
          AuctionItemMap.put(itemTwo.getItemID(), itemTwo);
          AuctionItemMap.put(itemThree.getItemID(), itemThree);*/
 
-         createNewListing("Book", "Some text on paper", 2.00);
-         createNewListing("Car", "Metal box with wheels", 1000.00);
-         createNewListing("Chair", "Made of wood and has four legs", 40.00);
+         createNewListing(384,"Book", "Some text on paper", 2.00);
+         createNewListing(3492,"Car", "Metal box with wheels", 1000.00);
+         createNewListing(23,"Chair", "Made of wood and has four legs", 40.00);
 
          createNewBuyer("John Smith", "john.smith@gmail.com");
          createNewBuyer("Brad Walsh", "brad.walsh@gmail.com");
@@ -50,9 +54,9 @@ public class auctionImpl extends java.rmi.server.UnicastRemoteObject implements 
         return AuctionItemMap.keySet();
     }
 
-    public AuctionItem createNewListing(String item, String desc, double reservePrice) {
+    public AuctionItem createNewListing(int clientID, String item, String desc, double reservePrice) {
         int ID = generateID(AuctionItemMap);
-        AuctionItem newAuctionItem = new AuctionItem(ID, item, desc, reservePrice);
+        AuctionItem newAuctionItem = new AuctionItem(clientID, ID, item, desc, reservePrice);
         AuctionItemMap.put(ID, newAuctionItem);
         System.out.println(AuctionItemMap);
         return newAuctionItem;
@@ -71,6 +75,27 @@ public class auctionImpl extends java.rmi.server.UnicastRemoteObject implements 
         AuctionItem curClosedListing = AuctionItemMap.get(ID);
         AuctionItemMap.remove(ID);
         return curClosedListing;
+    
+        
+    }
+
+    public boolean clientIDChecker(int ClientID, int ID)
+    {
+        AuctionItem curClosedListing = AuctionItemMap.get(ID);
+        
+        if (curClosedListing.getClientID() == ClientID)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public int generateClientID()
+    {
+        return generateID(clientID);
     }
 
     public boolean reservePriceCheck(int ID)

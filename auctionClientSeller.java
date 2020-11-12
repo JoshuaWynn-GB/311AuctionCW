@@ -28,10 +28,12 @@ public class auctionClientSeller   {
     public static void main(String[] args) {
     Console console = System.console();
     boolean exit = false;
+    int clientID;
         try {
 
             // Create the reference to the remote object through the remiregistry
             auction c = (auction) Naming.lookup("rmi://localhost:1099/AuctionService");
+            clientID = c.generateClientID();
             /*System.out.println(c.getListingMap());
             System.out.println("hey");
             c.createNewListing("iPhone", "it's a phone");
@@ -50,7 +52,7 @@ public class auctionClientSeller   {
                         System.out.println("Enter your item's reserve price: ");
                         String strReservePrice= console.readLine();
                         double reservePrice = Double.valueOf(strReservePrice).doubleValue();
-                        AuctionItem newItem = c.createNewListing(title, description, reservePrice);
+                        AuctionItem newItem = c.createNewListing(clientID, title, description, reservePrice);
                         System.out.println("Item has been added\nID: " + newItem.getItemID() + "\nTitle: " + newItem.getItemTitle() + "\nDescription: " + newItem.getItemDescription() + newItem.getItemReservePrice() + "\n");
                         break;
                     case "2":
@@ -64,16 +66,24 @@ public class auctionClientSeller   {
                         System.out.println("Enter your item ID of the auction you want to close: ");
                         String strCloseID = console.readLine();
                         int closeID = Integer.valueOf(strCloseID).intValue();
-                        if (c.reservePriceCheck(closeID))
+
+                        System.out.println("Listing CID: " + (c.getAuctionListingMap().get(closeID)).getClientID() + "\nSent CID: " + clientID);
+                        if (c.clientIDChecker(clientID, closeID))
                         {
-                            AuctionItem closedListing = c.closeListing(closeID);
-                            System.out.println(c.getBuyerSpec(closedListing.getItemBuyerID()).getBuyerName() + " has won the listing (details below): "+ "\nTitle: " + closedListing.getItemTitle() + "\nSold Price: " + closedListing.getItemCurrentPrice() + "\nContact Name: " + c.getBuyerSpec(closedListing.getItemBuyerID()).getBuyerName() + "\nContact Email: "+ c.getBuyerSpec(closedListing.getItemBuyerID()).getBuyerEmail());
+                            if (c.reservePriceCheck(closeID))
+                            {
+                                AuctionItem closedListing = c.closeListing(closeID);
+                                System.out.println(c.getBuyerSpec(closedListing.getItemBuyerID()).getBuyerName() + " has won the listing (details below): "+ "\nTitle: " + closedListing.getItemTitle() + "\nSold Price: " + closedListing.getItemCurrentPrice() + "\nContact Name: " + c.getBuyerSpec(closedListing.getItemBuyerID()).getBuyerName() + "\nContact Email: "+ c.getBuyerSpec(closedListing.getItemBuyerID()).getBuyerEmail());
+                            }
+                            else
+                            {
+                                System.out.println("Reserve price has not been met so auction was not closed");
+                            }
                         }
                         else
                         {
-                            System.out.println("Reserve price has not been met so auction was not closed");
+                            System.out.println("Client ID does not match so can't close the listing.");
                         }
-                      
                       break;
                     case "4":
                       exit = true;

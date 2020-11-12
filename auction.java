@@ -10,7 +10,7 @@ public interface auction
 
 
 
-    public AuctionItem createNewListing(String item, String desc, double reservePrice)
+    public AuctionItem createNewListing(int clientID, String item, String desc, double reservePrice)
     throws java.rmi.RemoteException;
 
     public auctionBuyer createNewBuyer(String Name, String Email)
@@ -55,8 +55,12 @@ public interface auction
     public boolean reservePriceCheck(int ID)
     throws java.rmi.RemoteException;
 
+    public int generateClientID()
+    throws java.rmi.RemoteException;
 
 
+    public boolean clientIDChecker(int ClientID, int ID)
+    throws java.rmi.RemoteException;
     
 
    
