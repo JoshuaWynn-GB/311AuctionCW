@@ -10,31 +10,124 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SealedObject;
 import javax.crypto.spec.SecretKeySpec;
-public class auctionImpl extends java.rmi.server.UnicastRemoteObject implements auction {
-    //Create a Hashmap to store the auction items
+import java.util.Random;
+import java.util.Set;
+import java.util.jar.Attributes.Name;
+
+public class auctionImpl extends java.rmi.server.UnicastRemoteObject implements auction  {
+    // Create a Hashmap to store the auction items
     HashMap<Integer, AuctionItem> AuctionItemMap = new HashMap<Integer, AuctionItem>();
+    HashMap<Integer, auctionBuyer> AuctionBuyerMap = new HashMap<Integer, auctionBuyer>();
+
     public auctionImpl()
 
-        throws java.rmi.RemoteException {
+            throws java.rmi.RemoteException {
         super();
-        //Populate the auction list
-        AuctionItem itemOne = new AuctionItem(0, "Book", "Some text on paper");
-        AuctionItem itemTwo = new AuctionItem(1, "Car", "Metal box with wheels");
-        AuctionItem itemThree = new AuctionItem(2, "Chair", "Made of wood and has four legs");
+        // Populate the auction list
+        
+         /*AuctionItem itemOne = new AuctionItem(0, "Book", "Some text on paper", 2.00);
+         AuctionItem itemTwo = new AuctionItem(1, "Car", "Metal box with wheels", 1000.00);
+         AuctionItem itemThree = new AuctionItem(2, "Chair", "Made of wood and has four legs", 40.00);
+         
+         AuctionItemMap.put(itemOne.getItemID(), itemOne);
+         AuctionItemMap.put(itemTwo.getItemID(), itemTwo);
+         AuctionItemMap.put(itemThree.getItemID(), itemThree);*/
 
-        AuctionItemMap.put(itemOne.getItemID(), itemOne);
-        AuctionItemMap.put(itemTwo.getItemID(), itemTwo);
-        AuctionItemMap.put(itemThree.getItemID(), itemThree);
+         createNewListing("Book", "Some text on paper", 2.00);
+         createNewListing("Car", "Metal box with wheels", 1000.00);
+         createNewListing("Chair", "Made of wood and has four legs", 40.00);
+
+         createNewBuyer("John Smith");
+         createNewBuyer("Brad Walsh");
+
+
+         
 
     }
 
-    public SealedObject getSpec(int itemId, SealedObject clientRequest) throws java.rmi.RemoteException {
+    public Set<Integer> getAllKeys()
+    {
+        return AuctionItemMap.keySet();
+    }
+
+    public AuctionItem createNewListing(String item, String desc, double reservePrice) {
+        int ID = generateID(AuctionItemMap);
+        AuctionItem newAuctionItem = new AuctionItem(ID, item, desc, reservePrice);
+        AuctionItemMap.put(ID, newAuctionItem);
+        System.out.println(AuctionItemMap);
+        return newAuctionItem;
+    }
+
+    public auctionBuyer createNewBuyer(String Name) {
+        int ID = generateID(AuctionItemMap);
+        auctionBuyer newBuyer = new auctionBuyer(ID, Name);
+        AuctionBuyerMap.put(ID, newBuyer);
+        System.out.println(AuctionBuyerMap);
+        return newBuyer;
+    }
+
+
+    public int generateID(HashMap map)
+    {
+        boolean Found = true;
+        Random ran = new Random();
+        int newID = 0;
+        int mapSize = 10000;
+        while (Found) 
+        {
+            int randomInt = ran.nextInt(mapSize);
+            if (map.size() == mapSize)
+            {
+                System.exit(0); 
+            } 
+            else if (map.get(randomInt) == null)
+            {
+                Found = false;
+                newID = randomInt;
+            }
+        }
+        System.out.println("ID: " + newID);
+        return newID;
+    }
+
+    public HashMap<Integer, AuctionItem> getAuctionListingMap()
+    {
+        return AuctionItemMap;
+    }
+
+    public HashMap<Integer, auctionBuyer> getBuyerMap()
+    {
+        return AuctionBuyerMap;
+    }
+
+
+    public void updateNewBid(int listingID, int buyerID, double bid)
+    {
+        AuctionItemMap.get(listingID).setItemBuyerID(buyerID);
+        AuctionItemMap.get(listingID).setItemCurrentPrice(bid);
+        System.out.println(AuctionItemMap.get(listingID).getItemTitle() + "\n" + AuctionItemMap.get(listingID).getItemCurrentPrice()+ "\n" + AuctionItemMap.get(listingID).getItemBuyerID());
+    }
+
+
+    public SealedObject getEnSpec(int itemId, SealedObject clientRequest) throws java.rmi.RemoteException {
         //Gets the current auction item and encrypts it
         AuctionItem currentItem = AuctionItemMap.get(itemId);
         SealedObject encryptedCurItem = encrypt(currentItem);
         System.out.println("[SERVER] Decrypted Client Request: " + decrypt(clientRequest).getID());
         System.out.println("[SERVER] Encrypted Current Item: " + encryptedCurItem);
         return encryptedCurItem;
+    }
+
+    public AuctionItem getSpec(int itemId, int clientID) throws java.rmi.RemoteException {
+        //Gets the current auction item and encrypts it
+        AuctionItem currentItem = AuctionItemMap.get(itemId);
+        return currentItem;
+    }
+
+    public auctionBuyer getBuyerSpec(int buyerID)
+    {
+        auctionBuyer currentBuyer = AuctionBuyerMap.get(buyerID);
+        return currentBuyer;
     }
 
 

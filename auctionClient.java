@@ -26,7 +26,7 @@ public class auctionClient {
 
             // Create the reference to the remote object through the remiregistry
             auction c = (auction) Naming.lookup("rmi://localhost:1099/AuctionService");
-
+            System.out.println(c.getSpec(1, 0));
             //create an instance of a client request (just contains the client id)
             clientRequest cOne = new clientRequest(0);
 
@@ -40,7 +40,7 @@ public class auctionClient {
             System.out.println("[CLIENT] Encrypted Client Request: " + cEncryptOne + "\n");
 
             //Get the current auction item and decrypt it
-            SealedObject currentEncryptedItem = c.getSpec(0, cEncryptOne);
+            SealedObject currentEncryptedItem = c.getEnSpec(0, cEncryptOne);
             AuctionItem currentDecryptedItem = decrypt(currentEncryptedItem);
             System.out.println("[CLIENT] Encrypted Current Item: " + currentEncryptedItem);
             System.out.println("[CLIENT] Decrypted Item Title: " + currentDecryptedItem.getItemTitle() + "\n[CLIENT] Decrypted Item Description: " + currentDecryptedItem.getItemDescription());
