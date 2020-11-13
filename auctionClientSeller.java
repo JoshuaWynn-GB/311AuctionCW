@@ -33,18 +33,17 @@ public class auctionClientSeller   {
 
             // Create the reference to the remote object through the remiregistry
             auction c = (auction) Naming.lookup("rmi://localhost:1099/AuctionService");
+            //creates unique client ID
             clientID = c.generateClientID();
-            /*System.out.println(c.getListingMap());
-            System.out.println("hey");
-            c.createNewListing("iPhone", "it's a phone");
-            System.out.println(c.getListingMap());*/
 
+            //runs the program in a loop
             while (exit == false)
             {
                 System.out.println("Welcome to the Client Seller\n==================\nType '1' to Create a new listing\nType '2' to see all current listings\nType '3' to close a listing\nType '4' to exit the program");
                 
                 switch (console.readLine()) {
                     case "1":
+                        //creates a new auction listing
                         System.out.println("Enter your item's title: ");
                         String title = console.readLine();
                         System.out.println("Enter your item's description: ");
@@ -56,24 +55,27 @@ public class auctionClientSeller   {
                         System.out.println("Item has been added\nID: " + newItem.getItemID() + "\nTitle: " + newItem.getItemTitle() + "\nDescription: " + newItem.getItemDescription() + newItem.getItemReservePrice() + "\n");
                         break;
                     case "2":
-                        
+                        //Gets auction map keys and gets all the items in the map
                         Set<Integer> allKeys = c.getAuctionListingMap().keySet();
                         for(Integer i : allKeys) {
-                        System.out.println("ID: " + c.getSpec(i, 0).getItemID() + "\nTitle: " + c.getSpec(i, 0).getItemTitle() + "\nDescription: " + c.getSpec(i, 0).getItemDescription() + "\nReserve Price: " + c.getSpec(i, 0).getItemReservePrice() + "\n");
+                        System.out.println("ID: " + c.getSpec(i, 0).getItemID() + "\nTitle: " + c.getSpec(i, 0).getItemTitle() + "\nDescription: " + c.getSpec(i, 0).getItemDescription() + "\n");
                         }
                       break;
                     case "3":
+                        //gets the ID of the auction you want to close
                         System.out.println("Enter your item ID of the auction you want to close: ");
                         String strCloseID = console.readLine();
                         int closeID = Integer.valueOf(strCloseID).intValue();
-
+                        
+                        //Checks that the client ID is the same as the one that created the listing
                         System.out.println("Listing CID: " + (c.getAuctionListingMap().get(closeID)).getClientID() + "\nSent CID: " + clientID);
                         if (c.clientIDChecker(clientID, closeID))
                         {
+                            //checks it's larger then the reserver price
                             if (c.reservePriceCheck(closeID))
                             {
                                 AuctionItem closedListing = c.closeListing(closeID);
-                                System.out.println(c.getBuyerSpec(closedListing.getItemBuyerID()).getBuyerName() + " has won the listing (details below): "+ "\nTitle: " + closedListing.getItemTitle() + "\nSold Price: " + closedListing.getItemCurrentPrice() + "\nContact Name: " + c.getBuyerSpec(closedListing.getItemBuyerID()).getBuyerName() + "\nContact Email: "+ c.getBuyerSpec(closedListing.getItemBuyerID()).getBuyerEmail());
+                                System.out.println(c.getBuyerSpec(closedListing.getItemBuyerID()).getBuyerName() + " has won the listing (details below): "+ "\nTitle: " + closedListing.getItemTitle() + "\nSold Price: £" + closedListing.getItemCurrentPrice() + "\nContact Name: " + c.getBuyerSpec(closedListing.getItemBuyerID()).getBuyerName() + "\nContact Email: "+ c.getBuyerSpec(closedListing.getItemBuyerID()).getBuyerEmail());
                             }
                             else
                             {

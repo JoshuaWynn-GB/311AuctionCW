@@ -27,15 +27,8 @@ public class auctionImpl extends java.rmi.server.UnicastRemoteObject implements 
 
             throws java.rmi.RemoteException {
         super();
-        // Populate the auction list
-        
-         /*AuctionItem itemOne = new AuctionItem(0, "Book", "Some text on paper", 2.00);
-         AuctionItem itemTwo = new AuctionItem(1, "Car", "Metal box with wheels", 1000.00);
-         AuctionItem itemThree = new AuctionItem(2, "Chair", "Made of wood and has four legs", 40.00);
-         
-         AuctionItemMap.put(itemOne.getItemID(), itemOne);
-         AuctionItemMap.put(itemTwo.getItemID(), itemTwo);
-         AuctionItemMap.put(itemThree.getItemID(), itemThree);*/
+        //Populate the auction list
+        //Populate new Buyers
 
          createNewListing(384,"Book", "Some text on paper", 2.00);
          createNewListing(3492,"Car", "Metal box with wheels", 1000.00);
@@ -48,12 +41,13 @@ public class auctionImpl extends java.rmi.server.UnicastRemoteObject implements 
          
 
     }
-
+    //gets all the keys from the listings
     public Set<Integer> getAllKeys()
     {
         return AuctionItemMap.keySet();
     }
 
+    //creates new Listing
     public AuctionItem createNewListing(int clientID, String item, String desc, double reservePrice) {
         int ID = generateID(AuctionItemMap);
         AuctionItem newAuctionItem = new AuctionItem(clientID, ID, item, desc, reservePrice);
@@ -62,6 +56,7 @@ public class auctionImpl extends java.rmi.server.UnicastRemoteObject implements 
         return newAuctionItem;
     }
 
+    //creates new buyer
     public auctionBuyer createNewBuyer(String Name, String Email) {
         int ID = generateID(AuctionItemMap);
         auctionBuyer newBuyer = new auctionBuyer(ID, Name, Email);
@@ -70,15 +65,15 @@ public class auctionImpl extends java.rmi.server.UnicastRemoteObject implements 
         return newBuyer;
     }
 
+    //closes listing
     public AuctionItem closeListing(int ID)
     {
         AuctionItem curClosedListing = AuctionItemMap.get(ID);
         AuctionItemMap.remove(ID);
         return curClosedListing;
-    
-        
     }
 
+    //checks to see if the listing you want to close has the same client ID and returns a boolean
     public boolean clientIDChecker(int ClientID, int ID)
     {
         AuctionItem curClosedListing = AuctionItemMap.get(ID);
@@ -93,6 +88,7 @@ public class auctionImpl extends java.rmi.server.UnicastRemoteObject implements 
         }
     }
 
+    //checks to see if buyer ID exists
     public boolean buyerIDCheck(int ID)
     {
         if (AuctionBuyerMap.get(ID) != null)
@@ -105,6 +101,7 @@ public class auctionImpl extends java.rmi.server.UnicastRemoteObject implements 
         }
     }
 
+    //checks to see if auction item exists
     public boolean auctionItemCheck(int ID)
     {
         if (AuctionItemMap.get(ID) != null)
@@ -116,12 +113,13 @@ public class auctionImpl extends java.rmi.server.UnicastRemoteObject implements 
             return false;
         }
     }
-
+    //returns a unique random int
     public int generateClientID()
     {
         return generateID(clientID);
     }
 
+    //checks that the price is more then the reserve price
     public boolean reservePriceCheck(int ID)
     {
         if(AuctionItemMap.get(ID).getItemReservePrice()<AuctionItemMap.get(ID).getItemCurrentPrice())
@@ -135,6 +133,7 @@ public class auctionImpl extends java.rmi.server.UnicastRemoteObject implements 
     }
 
 
+    //generates a unique int 
     public int generateID(HashMap map)
     {
         boolean Found = true;
@@ -143,7 +142,9 @@ public class auctionImpl extends java.rmi.server.UnicastRemoteObject implements 
         int mapSize = 10000;
         while (Found) 
         {
+            
             int randomInt = ran.nextInt(mapSize);
+            //if map is full close program
             if (map.size() == mapSize)
             {
                 System.exit(0); 
@@ -168,7 +169,7 @@ public class auctionImpl extends java.rmi.server.UnicastRemoteObject implements 
         return AuctionBuyerMap;
     }
 
-
+    //updates a listing with the new bid with the buyers ID
     public void updateNewBid(int listingID, int buyerID, double bid)
     {
         AuctionItemMap.get(listingID).setItemBuyerID(buyerID);
@@ -176,7 +177,7 @@ public class auctionImpl extends java.rmi.server.UnicastRemoteObject implements 
         System.out.println(AuctionItemMap.get(listingID).getItemTitle() + "\n" + AuctionItemMap.get(listingID).getItemCurrentPrice()+ "\n" + AuctionItemMap.get(listingID).getItemBuyerID());
     }
 
-
+    //Level 2
     public SealedObject getEnSpec(int itemId, SealedObject clientRequest) throws java.rmi.RemoteException {
         //Gets the current auction item and encrypts it
         AuctionItem currentItem = AuctionItemMap.get(itemId);
@@ -192,6 +193,7 @@ public class auctionImpl extends java.rmi.server.UnicastRemoteObject implements 
         return currentItem;
     }
 
+    //get buyer details
     public auctionBuyer getBuyerSpec(int buyerID)
     {
         auctionBuyer currentBuyer = AuctionBuyerMap.get(buyerID);
@@ -199,7 +201,7 @@ public class auctionImpl extends java.rmi.server.UnicastRemoteObject implements 
     }
 
 
-
+    //Level 2
     public clientRequest decrypt(SealedObject obj) {
         //Takes a SealedObject and decrypts using a cipher which we get by reading in the shared key to return the client request
         Cipher ci;
@@ -214,6 +216,7 @@ public class auctionImpl extends java.rmi.server.UnicastRemoteObject implements 
         } 
     }
 
+    //Level 2
     public SecretKeySpec readKey()
     {
         //Read in shared key from file and return the key
@@ -228,6 +231,7 @@ public class auctionImpl extends java.rmi.server.UnicastRemoteObject implements 
         }     
     }
 
+    //Level 2
     public SealedObject encrypt(AuctionItem cItem)
     {
         //Take the current auction item and encrypt it using the cipher which you get from the shared key

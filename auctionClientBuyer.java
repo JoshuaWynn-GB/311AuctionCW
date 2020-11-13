@@ -17,16 +17,19 @@ public class auctionClientBuyer {
     
                 // Create the reference to the remote object through the remiregistry			
                 auction c = (auction) Naming.lookup("rmi://localhost:1099/AuctionService");
+
+                //User enters name and email to create a new buyer and log in
                 System.out.println("Enter your name: ");
                 String Name = console.readLine();
                 System.out.println("Enter your email: ");
                 String Email = console.readLine();
-                
                 currentLoggedInBuyer = c.createNewBuyer(Name, Email).getBuyerID();
 
+                //Program runs in a loop until exit program is called
                 while (exit == false)
                 {
                     System.out.println("Welcome to the Client Buyer\n==================");
+                    //Checks to see if a User is logged in
                     if (currentLoggedInBuyer==-1)
                     {
                         System.out.println("You are currently NOT logged in.");
@@ -35,14 +38,16 @@ public class auctionClientBuyer {
                     {
                         System.out.println("You are currently logged in as: " + c.getBuyerSpec(currentLoggedInBuyer).getBuyerName());
                     }
+
                     System.out.println("Type '1' to Log In/Log Out\nType '2' to see all accounts\nType '3' to make a bid\nType '4' to exit the program");
                     switch (console.readLine()) {
+                        //This is for demonstration purposes and allows you to switch accounts
                         case "1":
                             System.out.println("Enter your buyer's ID: ");
                             String strID = console.readLine();
                             int ID = Integer.valueOf(strID).intValue();
-                            //System.out.println(c.getBuyerSpec(ID).getBuyerName());
-
+                            
+                            //checks the buyer exists and logs in
                             if (c.buyerIDCheck(ID))
                             {
                                 currentLoggedInBuyer = ID;
@@ -54,7 +59,7 @@ public class auctionClientBuyer {
                             }
                             break;
                         case "2":
-                            
+                            //gets them all the keys from the buyers map and uses that to print all the buyers
                             Set<Integer> allKeys = c.getBuyerMap().keySet();
                             for(Integer i : allKeys) 
                             {
@@ -62,6 +67,7 @@ public class auctionClientBuyer {
                             }
                             break;
                         case "3":
+                            //gets all the auctions
                             Set<Integer> allListingKeys = c.getAuctionListingMap().keySet();
                             for(Integer i : allListingKeys) 
                             {
@@ -76,10 +82,13 @@ public class auctionClientBuyer {
 
                             }
 
+
+                            //gets id of auction item
                             System.out.println("Enter the ID of the listing you want to bid on: ");
                             String strListingID = console.readLine();
                             int ListingID = Integer.valueOf(strListingID).intValue();
 
+                            //checks the item exist
                             if (c.auctionItemCheck(ListingID))
                             {
                                 double curPrice = c.getSpec(ListingID, 0).getItemCurrentPrice();
@@ -87,6 +96,7 @@ public class auctionClientBuyer {
                                 System.out.println("Enter new bid: ");
                                 String strNewBid= console.readLine();
                                 double newBid = Double.valueOf(strNewBid).doubleValue();
+                                //checks the the new bid is more then the current price
                                 if (newBid>curPrice)
                                 {
                                     c.updateNewBid(ListingID, currentLoggedInBuyer, newBid);
@@ -100,18 +110,12 @@ public class auctionClientBuyer {
                             {
                                 System.out.println("Listing doesn't exist.");
                             }
-
-
                           break;
                         case "4":
-                          currentLoggedInBuyer = -1;
-                          System.out.println("User has been logged out.\n");
-                          break;
-                        case "5":
-                          exit = true;
-                          break;
+                        //exits program
+                            exit = true;
+                            break;
                         default:
-                          // code block
                       }
                 }
 
