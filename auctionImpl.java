@@ -4,7 +4,7 @@ import java.nio.file.Files;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
-import java.util.LinkedList;
+
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -14,7 +14,6 @@ import javax.crypto.SealedObject;
 import javax.crypto.spec.SecretKeySpec;
 import java.util.Random;
 import java.util.Set;
-import java.util.jar.Attributes.Name;
 
 public class auctionImpl extends java.rmi.server.UnicastRemoteObject implements auction  {
     // Create a Hashmap to store the auction items
@@ -48,7 +47,7 @@ public class auctionImpl extends java.rmi.server.UnicastRemoteObject implements 
     }
 
     //creates new Listing
-    public AuctionItem createNewListing(int clientID, String item, String desc, double reservePrice) {
+    public synchronized AuctionItem createNewListing(int clientID, String item, String desc, double reservePrice) {
         int ID = generateID(AuctionItemMap);
         AuctionItem newAuctionItem = new AuctionItem(clientID, ID, item, desc, reservePrice);
         AuctionItemMap.put(ID, newAuctionItem);
@@ -57,7 +56,7 @@ public class auctionImpl extends java.rmi.server.UnicastRemoteObject implements 
     }
 
     //creates new buyer
-    public auctionBuyer createNewBuyer(String Name, String Email) {
+    public synchronized auctionBuyer createNewBuyer(String Name, String Email) {
         int ID = generateID(AuctionItemMap);
         auctionBuyer newBuyer = new auctionBuyer(ID, Name, Email);
         AuctionBuyerMap.put(ID, newBuyer);
@@ -66,7 +65,7 @@ public class auctionImpl extends java.rmi.server.UnicastRemoteObject implements 
     }
 
     //closes listing
-    public AuctionItem closeListing(int ID)
+    public synchronized AuctionItem closeListing(int ID)
     {
         AuctionItem curClosedListing = AuctionItemMap.get(ID);
         AuctionItemMap.remove(ID);
@@ -170,7 +169,7 @@ public class auctionImpl extends java.rmi.server.UnicastRemoteObject implements 
     }
 
     //updates a listing with the new bid with the buyers ID
-    public void updateNewBid(int listingID, int buyerID, double bid)
+    public synchronized void updateNewBid(int listingID, int buyerID, double bid)
     {
         AuctionItemMap.get(listingID).setItemBuyerID(buyerID);
         AuctionItemMap.get(listingID).setItemCurrentPrice(bid);

@@ -1,9 +1,6 @@
 import java.rmi.Naming; //Import the rmi naming - so you can lookup remote object
 import java.rmi.RemoteException; //Import the RemoteException class so you can catch it
 import java.util.Set;
-
-import javax.lang.model.util.ElementScanner14;
-
 import java.io.Console;
 import java.net.MalformedURLException;	//Import the MalformedURLException class so you can catch it
 import java.rmi.NotBoundException;	//Import the NotBoundException class so you can catch it

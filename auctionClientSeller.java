@@ -1,28 +1,9 @@
 import java.rmi.Naming; //Import the rmi naming - so you can lookup remote object
 import java.rmi.RemoteException; //Import the RemoteException class so you can catch it
-import java.security.InvalidKeyException;
-import java.security.Key;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.util.HashMap;
-import java.util.Random;
 import java.util.Set;
-
-import javax.crypto.SealedObject;
-import javax.crypto.spec.SecretKeySpec;
 import java.net.MalformedURLException; //Import the MalformedURLException class so you can catch it
-import java.nio.file.Files;
 import java.rmi.NotBoundException; //Import the NotBoundException class so you can catch it
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.KeyGenerator;
-import javax.crypto.NoSuchPaddingException;
-import java.io.IOException; // Import the IOException class to handle errors
-import java.io.OutputStream;
 import java.io.Console;
-import java.io.File; // Import the File class
-import java.io.FileOutputStream;
 public class auctionClientSeller   {
 
     public static void main(String[] args) {
