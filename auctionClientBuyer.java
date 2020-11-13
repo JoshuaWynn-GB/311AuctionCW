@@ -17,6 +17,13 @@ public class auctionClientBuyer {
     
                 // Create the reference to the remote object through the remiregistry			
                 auction c = (auction) Naming.lookup("rmi://localhost:1099/AuctionService");
+                System.out.println("Enter your name: ");
+                String Name = console.readLine();
+                System.out.println("Enter your email: ");
+                String Email = console.readLine();
+                
+                currentLoggedInBuyer = c.createNewBuyer(Name, Email).getBuyerID();
+
                 while (exit == false)
                 {
                     System.out.println("Welcome to the Client Buyer\n==================");
